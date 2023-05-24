@@ -12,25 +12,25 @@ export default function Home() {
             <Link href='/units/UnitA'>A</Link>
           </li>
           <li>
-            <Link href='/units/b'>B</Link>
+            <Link href='/units/UnitB'>B</Link>
           </li>
           <li>
-            <Link href='/units/c'>C</Link>
+            <Link href='/units/UnitC'>C</Link>
           </li>
           <li>
-            <Link href='/units/d'>D</Link>
+            <Link href='/units/UnitD'>D</Link>
           </li>
           <li>
-            <Link href='/units/e'>E</Link>
+            <Link href='/units/UnitE'>E</Link>
           </li>
           <li>
-            <Link href='/units/f'>F</Link>
+            <Link href='/units/UnitF'>F</Link>
           </li>
           <li>
-            <Link href='/units/g'>G</Link>
+            <Link href='/units/UnitG'>G</Link>
           </li>
           <li>
-            <Link href='/units/h'>H</Link>
+            <Link href='/units/UnitH'>H</Link>
           </li>
         </ul>
       </div>

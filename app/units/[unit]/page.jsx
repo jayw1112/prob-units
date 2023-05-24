@@ -234,7 +234,7 @@ const UnitPage = ({ params }) => {
 
   return (
     <div>
-      <h1>{params.unit}</h1>
+      <h1>{params.unit.replace('Unit', 'Unit ')}</h1>
       {/* Example using Grid's API */}
       {/* <button onClick={buttonListener}>Push Me</button> */}
       {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
