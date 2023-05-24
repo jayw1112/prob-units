@@ -5,6 +5,8 @@ import { AgGridReact } from 'ag-grid-react' // the AG Grid React Component
 
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
+import { getInmates } from '@/public/firebase.utils'
+import { db } from '@/public/firebase'
 
 const UnitPage = ({ params }) => {
   const gridRef = useRef() // Optional - for accessing Grid's API
@@ -12,14 +14,53 @@ const UnitPage = ({ params }) => {
 
   // Each Column Definition results in one Column.
   const [columnDefs, setColumnDefs] = useState([
-    { field: 'Last Name', colId: 'Last Name', sort: 'asc' }, // - set to sort by Last Name ascending
-    { field: 'First Name' },
-    { field: 'PDJ #', type: 'numberColumn' },
+    {
+      field: 'lastName',
+      headerName: 'Last Name',
+      colId: 'Last Name',
+      sort: 'asc',
+    }, // - set to sort by Last Name ascending
+    { field: 'firstName', headerName: 'First Name' },
+    { field: 'pdjNumber', headerName: 'PDJ #', type: 'numberColumn' },
     { field: 'DOB', type: 'dateColumn' },
-    { field: 'Age', type: 'numberColumn' },
-    { field: 'Ethnicity', width: 90, filter: false },
+    { field: 'Age', type: 'numberColumn', sortable: false },
+    {
+      field: 'Ethnicity',
+      width: 90,
+      filter: false,
+      cellEditor: 'agSelectCellEditor',
+      cellEditorParams: { values: ['A', 'B', 'H', 'W', '(Other)'] },
+    },
     { field: 'Intake', type: 'dateColumn' },
-    { field: 'Room', type: 'smallColumn' },
+    {
+      field: 'Room',
+      type: 'smallColumn',
+      cellEditor: 'agSelectCellEditor',
+      cellEditorParams: {
+        values: [
+          '1',
+          '2',
+          '3',
+          '4',
+          '5',
+          '6',
+          '7',
+          '8',
+          '9',
+          '10',
+          '11',
+          '12',
+          '13',
+          '14',
+          '15',
+          '16',
+          '17',
+          '18',
+          '19',
+          '20',
+        ],
+      },
+    },
     { field: 'Destination', width: 175 },
     { field: 'Charge' },
     { field: 'Code', type: 'smallColumn' },
@@ -49,6 +90,10 @@ const UnitPage = ({ params }) => {
       width: 100,
     },
     smallColumn: { width: 90 },
+    // cellEditor: 'agSelectCellEditor',
+    // cellEditorParams: {
+    //   values: ['A', 'B', 'H', 'W', '(Other)'],
+    // },
   }
 
   // Example of consuming Grid Event
@@ -65,15 +110,23 @@ const UnitPage = ({ params }) => {
 
   // fetch dummy data from data.json file into the rows state, using async/await
 
-  async function getRows() {
-    const response = await fetch('/data.json')
-    const data = await response.json()
-    setRowData(data)
-  }
+  // async function getRows() {
+  //   const response = await fetch('/data.json')
+  //   const data = await response.json()
+  //   setRowData(data)
+  // }
+
+  // useEffect(() => {
+  //   getRows()
+  // }, [])
 
   useEffect(() => {
-    getRows()
-  }, [])
+    async function fetchInmates() {
+      const inmates = await getInmates(db, params.unit)
+      setRowData(inmates)
+    }
+    fetchInmates()
+  }, [params.unit])
 
   // Example using Grid's API
   // const buttonListener = useCallback((e) => {
@@ -82,7 +135,7 @@ const UnitPage = ({ params }) => {
 
   return (
     <div>
-      <h1>Unit {params.unit.toUpperCase()}</h1>
+      <h1>{params.unit}</h1>
 
       {/* Example using Grid's API */}
       {/* <button onClick={buttonListener}>Push Me</button> */}

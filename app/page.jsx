@@ -9,7 +9,7 @@ export default function Home() {
         <h2>Units</h2>
         <ul>
           <li>
-            <Link href='/units/a'>A</Link>
+            <Link href='/units/UnitA'>A</Link>
           </li>
           <li>
             <Link href='/units/b'>B</Link>
