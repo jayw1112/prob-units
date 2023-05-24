@@ -6,14 +6,17 @@ import { AgGridReact } from 'ag-grid-react' // the AG Grid React Component
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import { getInmates } from '@/public/firebase.utils'
-import { db } from '@/public/firebase'
+import { auth, db } from '@/public/firebase'
 import * as XLSX from 'xlsx'
-import NewInmateDialog from '@/app/components/NewInmateDialog'
+import NewInmateDialog from '@/app/components/Dialog/NewInmateDialog'
 import useInmates from '@/public/use-inmate-hook'
+import { onAuthStateChanged } from '@firebase/auth'
+import { useRouter } from 'next/navigation'
 
 const UnitPage = ({ params }) => {
   const gridRef = useRef() // Optional - for accessing Grid's API
   const [rowData, setRowData] = useState() // Set rowData to Array of Objects, one Object per Row
+  const router = useRouter()
 
   const { inmates, addInmate, updateInmate, deleteInmate } = useInmates(
     params.unit
@@ -155,6 +158,20 @@ const UnitPage = ({ params }) => {
   //   }
   //   fetchInmates()
   // }, [params.unit])
+
+  // Reidirect unauthorized users to login page
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        // User is signed out, redirect to login page
+        router.push('/Login')
+        alert('Please Log In to view this page.')
+      }
+    })
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe()
+  }, [])
 
   useEffect(() => {
     async function fetchInmates() {
