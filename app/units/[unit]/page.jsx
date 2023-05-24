@@ -24,6 +24,14 @@ const UnitPage = ({ params }) => {
     pdjNumber: '',
     firstName: '',
     lastName: '',
+    DOB: '',
+    Ethnicity: '',
+    Intake: '',
+    Room: '',
+    Destination: '',
+    Charge: '',
+    Code: '',
+    Comments: '',
   })
 
   // Each Column Definition results in one Column.
@@ -45,7 +53,6 @@ const UnitPage = ({ params }) => {
       field: 'pdjNumber',
       headerName: 'PDJ #',
       type: 'numberColumn',
-      maxLength: 6,
       editable: false,
     },
     {
@@ -101,7 +108,7 @@ const UnitPage = ({ params }) => {
         ],
       },
     },
-    { field: 'Destination', width: 175 },
+    { field: 'Destination', width: 165 },
     { field: 'Charge' },
     { field: 'Code', type: 'smallColumn' },
     { field: 'Comments', width: 200 },
@@ -141,12 +148,32 @@ const UnitPage = ({ params }) => {
     console.log('cellClicked', event)
   }, [])
 
+  // useEffect(() => {
+  //   async function fetchInmates() {
+  //     const inmates = await getInmates(db, params.unit)
+  //     setRowData(inmates)
+  //   }
+  //   fetchInmates()
+  // }, [params.unit])
+
   useEffect(() => {
     async function fetchInmates() {
       const inmates = await getInmates(db, params.unit)
       setRowData(inmates)
+      console.log(
+        `${params.unit.replace('Unit', 'Unit ')} data fetched at`,
+        new Date()
+      )
     }
+
+    // Fetch inmates immediately
     fetchInmates()
+
+    // Then fetch inmates every 5 minutes
+    const intervalId = setInterval(fetchInmates, 5 * 60 * 1000)
+
+    // Clear the interval when the component unmounts
+    return () => clearInterval(intervalId)
   }, [params.unit])
 
   // Example using Grid's API
