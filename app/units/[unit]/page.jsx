@@ -5,17 +5,19 @@ import { AgGridReact } from 'ag-grid-react' // the AG Grid React Component
 
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
-import {
-  addInmate,
-  deleteInmate,
-  getInmates,
-  updateInmate,
-} from '@/public/firebase.utils'
+import { getInmates } from '@/public/firebase.utils'
 import { db } from '@/public/firebase'
+import * as XLSX from 'xlsx'
+import NewInmateDialog from '@/app/components/NewInmateDialog'
+import useInmates from '@/public/use-inmate-hook'
 
 const UnitPage = ({ params }) => {
   const gridRef = useRef() // Optional - for accessing Grid's API
   const [rowData, setRowData] = useState() // Set rowData to Array of Objects, one Object per Row
+
+  const { inmates, addInmate, updateInmate, deleteInmate } = useInmates(
+    params.unit
+  )
 
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [newInmateData, setNewInmateData] = useState({
@@ -26,6 +28,12 @@ const UnitPage = ({ params }) => {
 
   // Each Column Definition results in one Column.
   const [columnDefs, setColumnDefs] = useState([
+    {
+      headerName: '#',
+      valueGetter: 'node.rowIndex + 1',
+      width: 50,
+      pinned: 'left',
+    },
     {
       field: 'lastName',
       headerName: 'Last Name',
@@ -40,7 +48,14 @@ const UnitPage = ({ params }) => {
       maxLength: 6,
       editable: false,
     },
-    { field: 'DOB', type: 'dateColumn' },
+    {
+      field: 'DOB',
+      type: 'dateColumn',
+      valueFormatter: (params) => {
+        const date = new Date(params.value)
+        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
+      },
+    },
     { field: 'Age', type: 'numberColumn', sortable: false },
     {
       field: 'Ethnicity',
@@ -49,7 +64,14 @@ const UnitPage = ({ params }) => {
       cellEditor: 'agSelectCellEditor',
       cellEditorParams: { values: ['A', 'B', 'H', 'W', '(Other)'] },
     },
-    { field: 'Intake', type: 'dateColumn' },
+    {
+      field: 'Intake',
+      type: 'dateColumn',
+      valueFormatter: (params) => {
+        const date = new Date(params.value)
+        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
+      },
+    },
     {
       field: 'Room',
       type: 'smallColumn',
@@ -91,6 +113,10 @@ const UnitPage = ({ params }) => {
     editable: true,
     width: 150,
     filter: true,
+    cellStyle: {
+      borderRight: '1px solid rgba(49, 78, 167, 0.2)',
+      // borderBottom: '1px solid #444',
+    },
   }))
 
   // define a column type (you can define as many as you like)
@@ -100,7 +126,7 @@ const UnitPage = ({ params }) => {
       filter: 'agDateColumnFilter',
       // filterParams: { comparator: myDateComparator },
       suppressMenu: true,
-      width: 100,
+      width: 110,
     },
     numberColumn: {
       filter: 'agNumberColumnFilter',
@@ -132,7 +158,8 @@ const UnitPage = ({ params }) => {
     const { data } = event
     const { pdjNumber } = data // assuming pdjNumber is the unique identifier
     // Update Firestore
-    await updateInmate(db, params.unit, pdjNumber, data)
+    // await updateInmate(db, params.unit, pdjNumber, data)
+    await updateInmate(pdjNumber, data)
   }
 
   // This function will be called when the user clicks the "Add New Row" button
@@ -155,7 +182,8 @@ const UnitPage = ({ params }) => {
 
     try {
       // Add a new document to Firestore
-      await addInmate(db, params.unit, newInmateData.pdjNumber, newInmateData)
+      // await addInmate(db, params.unit, newInmateData.pdjNumber, newInmateData)
+      await addInmate(newInmateData)
 
       // Add the new row to rowData
       setRowData([...rowData, newInmateData])
@@ -199,6 +227,7 @@ const UnitPage = ({ params }) => {
   }
 
   // Deletes selected row and deletes document from Firestore
+  // Deletes selected row and deletes document from Firestore
   const deleteRow = async () => {
     const selectedNodes = gridRef.current.api.getSelectedNodes()
     const selectedData = selectedNodes.map((node) => node.data)
@@ -210,9 +239,7 @@ const UnitPage = ({ params }) => {
     )
     if (isConfirmed) {
       const pdjNumbers = selectedData.map((node) => node.pdjNumber)
-      await Promise.all(
-        pdjNumbers.map((pdjNumber) => deleteInmate(db, params.unit, pdjNumber))
-      )
+      await Promise.all(pdjNumbers.map((pdjNumber) => deleteInmate(pdjNumber)))
       const updatedRowData = rowData.filter(
         (row) => !pdjNumbers.includes(row.pdjNumber)
       )
@@ -230,6 +257,45 @@ const UnitPage = ({ params }) => {
       age--
     }
     return age
+  }
+
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      rowData.map((row) => ({
+        'Last Name': row.lastName,
+        'First Name': row.firstName,
+        'PDJ #': row.pdjNumber,
+        DOB: row.DOB,
+        Age: row.Age,
+        Ethnicity: row.Ethnicity,
+        Intake: row.Intake,
+        Room: row.Room,
+        Destination: row.Destination,
+        Charge: row.Charge,
+        Code: row.Code,
+        Comments: row.Comments,
+      })),
+      {
+        header: [
+          'Last Name',
+          'First Name',
+          'PDJ #',
+          'DOB',
+          'Age',
+          'Ethnicity',
+          'Intake',
+          'Room',
+          'Destination',
+          'Charge',
+          'Code',
+          'Comments',
+        ],
+        skipHeader: false,
+      }
+    )
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
+    XLSX.writeFile(wb, 'spreadsheet.xlsx')
   }
 
   return (
@@ -252,65 +318,17 @@ const UnitPage = ({ params }) => {
         />
       </div>
       <button onClick={openDialog}>Add New Row</button>
-      <dialog open={isDialogOpen}>
-        <form method='dialog'>
-          <label>
-            PDJ Number:
-            <input
-              type='number'
-              name='pdjNumber'
-              value={newInmateData.pdjNumber}
-              onChange={handleInputChange}
-              max={999999}
-            />
-          </label>
-          <label>
-            First Name:
-            <input
-              type='text'
-              name='firstName'
-              value={newInmateData.firstName}
-              onChange={handleInputChange}
-            />
-          </label>
-          <label>
-            Last Name:
-            <input
-              type='text'
-              name='lastName'
-              value={newInmateData.lastName}
-              onChange={handleInputChange}
-            />
-          </label>
-          <label>
-            DOB:
-            <input
-              type='date'
-              name='DOB'
-              value={newInmateData.DOB}
-              onChange={handleInputChange}
-            />
-          </label>
-          <label>
-            Intake:
-            <input
-              type='date'
-              name='Intake'
-              value={newInmateData.Intake}
-              onChange={handleInputChange}
-            />
-          </label>
-          <button type='button' onClick={handleDialogOk}>
-            OK
-          </button>
-          <button type='button' onClick={handleDialogCancel}>
-            Cancel
-          </button>
-        </form>
-      </dialog>
+      <NewInmateDialog
+        isOpen={isDialogOpen}
+        onOk={handleDialogOk}
+        onCancel={handleDialogCancel}
+        onChange={handleInputChange}
+        inmateData={newInmateData}
+      />
       <button type='button' onClick={deleteRow}>
         Delete Row
       </button>
+      <button onClick={exportToExcel}>Export Spreadsheet</button>
     </div>
   )
 }
