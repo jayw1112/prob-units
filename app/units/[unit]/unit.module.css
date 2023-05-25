@@ -1,0 +1,74 @@
+.gridContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: auto;
+  /* width: 80%; */
+  /* padding: 0 0.2rem; */
+  /* margin: 1rem; */
+  margin: 0 auto;
+  background-color: var(--blue-light2);
+  border-radius: 0.5rem;
+  /* border: 1px solid #000; */
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease-in-out;
+}
+
+.gridContainer button {
+  margin: 0.5rem;
+  padding: 0.5rem;
+  height: auto;
+  border-radius: 0.5rem;
+  align-items: center;
+  border: none;
+  background-color: var(--rich-black);
+  color: var(--antique-white);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.bigButton {
+  width: 14%;
+}
+
+.gridContainer button:hover {
+  background-color: var(--slate-gray);
+  scale: 1.04;
+}
+
+.gridContainer button:active {
+  transform: scale(0.9);
+}
+
+.gridContainer button:focus {
+  outline: none;
+}
+
+.title {
+  /* font-size: 1.5rem; */
+  font-weight: 600;
+  color: var(--rich-black);
+  margin: 1rem;
+}
+
+.date {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--slate-gray);
+  margin: 1rem;
+}
+
+.ag-theme-alpine {
+  --ag-foreground-color: rgb(126, 46, 132);
+  --ag-background-color: rgb(249, 245, 227);
+  --ag-header-foreground-color: rgb(204, 245, 172);
+  --ag-header-background-color: rgb(209, 64, 129);
+  --ag-odd-row-background-color: rgb(0, 0, 0, 0.03);
+  --ag-header-column-resize-handle-color: rgb(126, 46, 132);
+
+  --ag-font-size: 17px;
+  --ag-font-family: monospace;
+}

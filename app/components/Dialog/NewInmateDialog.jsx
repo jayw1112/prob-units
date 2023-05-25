@@ -1,6 +1,8 @@
+import classes from './NewInmateDialog.module.css'
+
 function NewInmateDialog({ isOpen, onOk, onCancel, onChange, inmateData }) {
   return (
-    <dialog open={isOpen}>
+    <dialog className={classes.dialog} open={isOpen}>
       <form method='dialog'>
         <label>
           PDJ Number:
@@ -48,12 +50,14 @@ function NewInmateDialog({ isOpen, onOk, onCancel, onChange, inmateData }) {
             onChange={onChange}
           />
         </label>
-        <button type='button' onClick={onOk}>
-          OK
-        </button>
-        <button type='button' onClick={onCancel}>
-          Cancel
-        </button>
+        <div className={classes.buttons}>
+          <button type='button' onClick={onOk}>
+            OK
+          </button>
+          <button type='button' onClick={onCancel}>
+            Cancel
+          </button>
+        </div>
       </form>
     </dialog>
   )

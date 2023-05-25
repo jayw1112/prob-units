@@ -3,6 +3,7 @@
 import { logIn, signUp } from '@/public/firebase'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
+import classes from './AuthForm.module.css'
 
 function AuthForm() {
   const [isSignUp, setIsSignUp] = useState(false) // state to toggle between sign up and log in
@@ -44,7 +45,7 @@ function AuthForm() {
   }
 
   return (
-    <div>
+    <div className={classes.formContainer}>
       <h2>{isSignUp ? 'Sign Up' : 'Log In'}</h2>
       {error && <p>{error}</p>}
       <form onSubmit={handleSubmit}>

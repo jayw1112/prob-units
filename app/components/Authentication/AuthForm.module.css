@@ -1,0 +1,93 @@
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  max-width: 500px;
+  background-color: var(--blue-dark2);
+  border-radius: 0.5rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.formContainer h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--antique-white);
+  margin: 0.5rem;
+  padding: 0.5rem;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.formContainer form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.formContainer form label {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--rich-black);
+  margin: 0.5rem;
+  padding: 0.5rem;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.formContainer form input {
+  margin: 0.5rem;
+  padding: 0.5rem;
+  width: 60%;
+  height: auto;
+  border-radius: 0.5rem;
+  align-items: center;
+  border: none;
+  background-color: var(--blue-light);
+  color: var(--rich-black);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.formContainer form input:hover {
+  background-color: var(--slate-gray-light);
+  color: var(--rich-black);
+}
+
+.formContainer form input:focus {
+  outline: none;
+}
+
+.formContainer button {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 1rem auto;
+  width: 30%;
+  padding: 0.7rem;
+  border-radius: 0.5rem;
+  border: none;
+  background-color: var(--blue-dark);
+  color: var(--antique-white);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.formContainer button:hover {
+  background-color: var(--blue-dark2);
+  color: var(--antique-white);
+  scale: 1.05;
+}

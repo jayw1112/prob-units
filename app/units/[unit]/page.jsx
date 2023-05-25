@@ -12,11 +12,15 @@ import NewInmateDialog from '@/app/components/Dialog/NewInmateDialog'
 import useInmates from '@/public/use-inmate-hook'
 import { onAuthStateChanged } from '@firebase/auth'
 import { useRouter } from 'next/navigation'
+import classes from './unit.module.css'
+import { getCurrentDate } from '@/public/utility'
 
 const UnitPage = ({ params }) => {
   const gridRef = useRef() // Optional - for accessing Grid's API
   const [rowData, setRowData] = useState() // Set rowData to Array of Objects, one Object per Row
   const router = useRouter()
+  const gridContainerRef = useRef(null)
+  const date = getCurrentDate()
 
   const { inmates, addInmate, updateInmate, deleteInmate } = useInmates(
     params.unit
@@ -42,14 +46,16 @@ const UnitPage = ({ params }) => {
     {
       headerName: '#',
       valueGetter: 'node.rowIndex + 1',
-      width: 50,
+      width: 52,
       pinned: 'left',
+      filter: false,
     },
     {
       field: 'lastName',
       headerName: 'Last Name',
       colId: 'Last Name',
       sort: 'asc',
+      sortable: true,
     }, // - set to sort by Last Name ascending
     { field: 'firstName', headerName: 'First Name' },
     {
@@ -57,6 +63,7 @@ const UnitPage = ({ params }) => {
       headerName: 'PDJ #',
       type: 'numberColumn',
       editable: false,
+      filter: false,
     },
     {
       field: 'DOB',
@@ -85,6 +92,7 @@ const UnitPage = ({ params }) => {
     {
       field: 'Room',
       type: 'smallColumn',
+      filter: false,
       cellEditor: 'agSelectCellEditor',
       cellEditorParams: {
         values: [
@@ -119,12 +127,12 @@ const UnitPage = ({ params }) => {
 
   // DefaultColDef sets props common to all Columns
   const defaultColDef = useMemo(() => ({
-    sortable: true,
+    sortable: false,
     editable: true,
     width: 150,
     filter: true,
     cellStyle: {
-      borderRight: '1px solid rgba(49, 78, 167, 0.2)',
+      borderRight: '1px solid rgba(49, 78, 167, 0.05)',
       // borderBottom: '1px solid #444',
     },
   }))
@@ -137,6 +145,7 @@ const UnitPage = ({ params }) => {
       // filterParams: { comparator: myDateComparator },
       suppressMenu: true,
       width: 110,
+      filter: false,
     },
     numberColumn: {
       filter: 'agNumberColumnFilter',
@@ -234,6 +243,21 @@ const UnitPage = ({ params }) => {
 
       // Close the dialog
       setIsDialogOpen(false)
+
+      // Clear the input fields
+      setNewInmateData({
+        pdjNumber: '',
+        firstName: '',
+        lastName: '',
+        DOB: '',
+        Ethnicity: '',
+        Intake: '',
+        Room: '',
+        Destination: '',
+        Charge: '',
+        Code: '',
+        Comments: '',
+      })
     } catch (error) {
       console.error('Error adding document: ', error)
     }
@@ -273,6 +297,12 @@ const UnitPage = ({ params }) => {
   // Deletes selected row and deletes document from Firestore
   // Deletes selected row and deletes document from Firestore
   const deleteRow = async () => {
+    // if no rows selected, alert user
+    if (gridRef.current.api.getSelectedNodes().length === 0) {
+      alert('Please select a row to delete.')
+      return
+    }
+
     const selectedNodes = gridRef.current.api.getSelectedNodes()
     const selectedData = selectedNodes.map((node) => node.data)
     const selectedDataStringPresentation = selectedData
@@ -342,13 +372,38 @@ const UnitPage = ({ params }) => {
     XLSX.writeFile(wb, 'spreadsheet.xlsx')
   }
 
+  // use effect called when a user clicks outside the grid to deselect all rows
+  useEffect(() => {
+    const handleBodyClick = (event) => {
+      if (!gridContainerRef.current.contains(event.target)) {
+        gridRef.current.api.deselectAll()
+      }
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        gridRef.current.api.deselectAll()
+      }
+    }
+
+    document.body.addEventListener('click', handleBodyClick)
+    document.body.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.body.removeEventListener('click', handleBodyClick)
+      document.body.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
+
   return (
-    <div>
-      <h1>{params.unit.replace('Unit', 'Unit ')}</h1>
+    <div className={classes.gridContainer} ref={gridContainerRef}>
+      <h1 className={classes.title}>{params.unit.replace('Unit', 'Unit ')}</h1>
+      {/* create an h3 that displays the current date */}
+      <h3 className={classes.date}>{date}</h3>
       {/* Example using Grid's API */}
       {/* <button onClick={buttonListener}>Push Me</button> */}
       {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
-      <div className='ag-theme-alpine' style={{ width: 1600, height: 650 }}>
+      <div className='ag-theme-alpine' style={{ width: 1580, height: 650 }}>
         <AgGridReact
           ref={gridRef} // Ref for accessing Grid's API
           rowData={rowData} // Row Data for Rows
@@ -361,7 +416,9 @@ const UnitPage = ({ params }) => {
           onCellValueChanged={onCellValueChanged}
         />
       </div>
-      <button onClick={openDialog}>Add New Row</button>
+      <button className={classes.bigButton} onClick={openDialog}>
+        Add New Row
+      </button>
       <NewInmateDialog
         isOpen={isDialogOpen}
         onOk={handleDialogOk}
@@ -369,10 +426,12 @@ const UnitPage = ({ params }) => {
         onChange={handleInputChange}
         inmateData={newInmateData}
       />
-      <button type='button' onClick={deleteRow}>
+      <button className={classes.bigButton} type='button' onClick={deleteRow}>
         Delete Row
       </button>
-      <button onClick={exportToExcel}>Export Spreadsheet</button>
+      <button className={classes.bigButton} onClick={exportToExcel}>
+        Export Spreadsheet
+      </button>
     </div>
   )
 }
