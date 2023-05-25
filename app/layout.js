@@ -5,7 +5,7 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { signOut, onAuthStateChanged } from '@firebase/auth'
+import { signOut, onAuthStateChanged, updatePassword } from '@firebase/auth'
 import { useState, useEffect } from 'react'
 import { deleteDoc, doc, getDoc } from 'firebase/firestore'
 import classes from './layout.module.css'
@@ -20,6 +20,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   const router = useRouter()
   const [user, setUser] = useState(null)
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false)
+  const [password, setPassword] = useState('')
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -64,6 +66,27 @@ export default function RootLayout({ children }) {
     }
   }
 
+  const handlePasswordChange = async (e) => {
+    e.preventDefault()
+    const user = auth.currentUser
+    try {
+      if (user) {
+        await updatePassword(user, password)
+        alert('Password changed successfully')
+        setIsPasswordDialogOpen(false)
+        setPassword('')
+      } else {
+        throw new Error('No user is currently signed in')
+      }
+    } catch (error) {
+      console.error('Error changing password: ', error)
+    }
+  }
+
+  const openPasswordDialog = () => {
+    setIsPasswordDialogOpen(true)
+  }
+
   return (
     <html lang='en'>
       <body className={inter.className}>
@@ -78,12 +101,35 @@ export default function RootLayout({ children }) {
               <button className={classes.dropbtn}>Account</button>
               <div className={classes.dropdownContent}>
                 <div onClick={handleSignOut}>Sign Out</div>
+                <div onClick={openPasswordDialog}>Change Password</div>
                 <div onClick={handleDeleteAccount}>Delete Account</div>
               </div>
             </div>
           ) : (
             <Link href='/Login'>Login</Link>
           )}
+          <dialog className={classes.dialog} open={isPasswordDialogOpen}>
+            <form method='dialog' onSubmit={handlePasswordChange}>
+              <label>
+                New Password:
+                <input
+                  type='password'
+                  name='newPassword'
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </label>
+              <div className={classes.buttons}>
+                <button type='submit'>Change Password</button>
+                <button
+                  type='button'
+                  onClick={() => setIsPasswordDialogOpen(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </dialog>
         </nav>
         {children}
       </body>

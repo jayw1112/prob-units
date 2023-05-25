@@ -1,3 +1,4 @@
+import { sendPasswordResetEmail } from '@firebase/auth'
 import {
   collection,
   doc,
@@ -6,6 +7,7 @@ import {
   deleteDoc,
   updateDoc,
 } from 'firebase/firestore'
+import { auth } from './firebase'
 
 // Function to add a new inmate
 export async function addInmate(db, unit, pdjNumber, inmateData) {
@@ -31,4 +33,13 @@ export async function deleteInmate(db, unit, pdjNumber) {
 export async function updateInmate(db, unit, pdjNumber, updatedData) {
   const inmateRef = doc(db, `CJH/${unit}/Minors/${pdjNumber}`)
   await updateDoc(inmateRef, updatedData)
+}
+
+export async function resetPassword(email) {
+  try {
+    await sendPasswordResetEmail(auth, email)
+    console.log('Password reset email sent!')
+  } catch (error) {
+    console.log(error)
+  }
 }

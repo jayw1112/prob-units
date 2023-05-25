@@ -4,6 +4,7 @@ import { logIn, signUp } from '@/public/firebase'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import classes from './AuthForm.module.css'
+import { resetPassword } from '@/public/firebase.utils'
 
 function AuthForm() {
   const [isSignUp, setIsSignUp] = useState(false) // state to toggle between sign up and log in
@@ -39,6 +40,20 @@ function AuthForm() {
         await logIn(email, password)
       }
       router.push('/')
+    } catch (error) {
+      setError(error.message)
+    }
+  }
+
+  const handleResetPassword = async () => {
+    if (!email) {
+      setError('Please enter your email address.')
+      return
+    }
+    try {
+      await resetPassword(email)
+      const dialog = document.getElementById('emailSentDialog')
+      dialog.showModal()
     } catch (error) {
       setError(error.message)
     }
@@ -98,6 +113,17 @@ function AuthForm() {
       <button onClick={() => setIsSignUp(!isSignUp)}>
         {isSignUp ? 'Already have an account? Log In' : 'Create an account'}
       </button>
+      {!isSignUp && (
+        <button onClick={handleResetPassword}>Forgot Password?</button>
+      )}
+      <dialog id='emailSentDialog'>
+        <p>Password reset email sent!</p>
+        <button
+          onClick={() => document.getElementById('emailSentDialog').close()}
+        >
+          OK
+        </button>
+      </dialog>
     </div>
   )
 }
