@@ -88,6 +88,13 @@ export default function RootLayout({ children }) {
 
   const handleDeleteAccount = async (currentPassword) => {
     const user = auth.currentUser
+
+    if (!currentPassword || currentPassword === '') {
+      setIsPasswordValid(false)
+      return
+    }
+    setIsPasswordValid(true)
+
     if (user) {
       const credential = EmailAuthProvider.credential(
         user.email,

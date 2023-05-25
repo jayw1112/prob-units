@@ -21,6 +21,10 @@ export function PasswordDialog({
       setIsPasswordValid(false)
       return
     }
+    if (!currentPassword.length) {
+      setIsPasswordValid(false)
+      return
+    }
     setIsPasswordValid(true)
     if (title === 'Delete Account') {
       const confirmation = window.confirm(
@@ -38,7 +42,7 @@ export function PasswordDialog({
     <dialog className={classes.dialog} open={true}>
       <form method='dialog' onSubmit={handleSubmit}>
         <h3 className={classes.title2}>{title}</h3>
-        <p>{description}</p>
+        <p className={classes.description}>{description}</p>
         <div className={classes.labelContainer}>
           <label>
             Current Password:
@@ -61,10 +65,16 @@ export function PasswordDialog({
             </label>
           )}
         </div>
-        {!isPasswordValid && (
+        {!isPasswordValid && title !== 'Delete Account' ? (
           <p className={classes.warning}>
             Password must be at least 6 characters long
           </p>
+        ) : (
+          !isPasswordValid && (
+            <p className={classes.warning}>
+              Incorrect password, please try again.
+            </p>
+          )
         )}
         <div className={classes.buttons}>
           <button type='submit'>{buttonLabel}</button>
