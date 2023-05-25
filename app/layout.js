@@ -1,14 +1,22 @@
 'use client'
 
-import { auth, db, deleteUser } from '@/public/firebase'
+import { auth, db } from '@/public/firebase'
 import './globals.css'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { signOut, onAuthStateChanged, updatePassword } from '@firebase/auth'
+import {
+  signOut,
+  onAuthStateChanged,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+  deleteUser,
+} from '@firebase/auth'
 import { useState, useEffect } from 'react'
 import { deleteDoc, doc, getDoc } from 'firebase/firestore'
 import classes from './layout.module.css'
+import { PasswordDialog } from './components/Dialog/PasswordDialog'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,6 +30,9 @@ export default function RootLayout({ children }) {
   const [user, setUser] = useState(null)
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false)
   const [password, setPassword] = useState('')
+  const [isPasswordValid, setIsPasswordValid] = useState(true)
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [dialogType, setDialogType] = useState(null)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -43,49 +54,117 @@ export default function RootLayout({ children }) {
     router.push('/Login') // redirect to the login page
   }
 
-  const handleDeleteAccount = async () => {
-    const confirmation = window.confirm(
-      'Are you sure you want to delete your account? This action cannot be undone.'
-    )
-    if (confirmation) {
+  // const handleDeleteAccount = async () => {
+  //   const confirmation = window.confirm(
+  //     'Are you sure you want to delete your account? This action cannot be undone.'
+  //   )
+  //   if (confirmation) {
+  //     try {
+  //       // Get the employeeNumber and lastName from the session
+  //       const employeeNumber = sessionStorage.getItem('employeeNumber')
+  //       const lastName = sessionStorage.getItem('lastName')
+
+  //       // Delete the Firestore document for the user
+  //       await deleteDoc(doc(db, 'Users', `${employeeNumber}-${lastName}`))
+
+  //       // Delete the user's account
+  //       await deleteUser(auth.currentUser)
+
+  //       router.push('/Login') // redirect to the login page
+  //     } catch (error) {
+  //       console.error('Error deleting account: ', error)
+  //     }
+  //   }
+  // }
+
+  const openDialog = (type) => {
+    setDialogType(type)
+    setIsPasswordDialogOpen(true)
+  }
+
+  const openPasswordDialog = () => {
+    openDialog('changePassword')
+  }
+
+  const handleDeleteAccount = async (currentPassword) => {
+    const user = auth.currentUser
+    if (user) {
+      const credential = EmailAuthProvider.credential(
+        user.email,
+        currentPassword
+      )
       try {
+        // Re-authenticate the user
+        await reauthenticateWithCredential(user, credential)
+
         // Get the employeeNumber and lastName from the session
         const employeeNumber = sessionStorage.getItem('employeeNumber')
         const lastName = sessionStorage.getItem('lastName')
 
-        // Delete the Firestore document for the user
-        await deleteDoc(doc(db, 'Users', `${employeeNumber}-${lastName}`))
+        // Delete the Firestore document for the user and the user's account
+        await Promise.all([
+          deleteUser(user),
+          deleteDoc(doc(db, 'Users', `${employeeNumber}-${lastName}`)),
+        ])
 
-        // Delete the user's account
-        await deleteUser(auth.currentUser)
+        alert('Account deleted successfully')
 
+        setCurrentPassword('') // reset the password input field
+        setIsPasswordDialogOpen(false) // close the dialog box
         router.push('/Login') // redirect to the login page
       } catch (error) {
         console.error('Error deleting account: ', error)
+        if (error.code === 'auth/requires-recent-login') {
+          alert('Please re-login and try again.')
+          handleSignOut()
+        } else if (error.code === 'auth/wrong-password') {
+          alert('Incorrect current password.')
+        }
       }
+    } else {
+      console.error('No user is currently signed in')
     }
   }
 
-  const handlePasswordChange = async (e) => {
-    e.preventDefault()
+  const handlePasswordChange = async (currentPassword, password) => {
+    // console.log('currentPassword: ', currentPassword)
     const user = auth.currentUser
-    try {
-      if (user) {
+    // console.log('user: ', user)
+    // console.log('password: ', password)
+    if (password.length < 6) {
+      setIsPasswordValid(false)
+      return
+    }
+    setIsPasswordValid(true)
+    if (user) {
+      const credential = EmailAuthProvider.credential(
+        user.email,
+        currentPassword
+      )
+      try {
+        await reauthenticateWithCredential(user, credential)
         await updatePassword(user, password)
         alert('Password changed successfully')
         setIsPasswordDialogOpen(false)
         setPassword('')
-      } else {
-        throw new Error('No user is currently signed in')
+        setCurrentPassword('')
+      } catch (error) {
+        console.error('Error changing password: ', error)
+        if (error.code === 'auth/requires-recent-login') {
+          alert('Please re-login and try again.')
+          handleSignOut()
+        } else if (error.code === 'auth/wrong-password') {
+          alert('Incorrect current password.')
+        }
       }
-    } catch (error) {
-      console.error('Error changing password: ', error)
+    } else {
+      console.error('No user is currently signed in')
     }
   }
 
-  const openPasswordDialog = () => {
-    setIsPasswordDialogOpen(true)
-  }
+  // const openPasswordDialog = () => {
+  //   setIsPasswordDialogOpen(true)
+  // }
 
   return (
     <html lang='en'>
@@ -102,34 +181,34 @@ export default function RootLayout({ children }) {
               <div className={classes.dropdownContent}>
                 <div onClick={handleSignOut}>Sign Out</div>
                 <div onClick={openPasswordDialog}>Change Password</div>
-                <div onClick={handleDeleteAccount}>Delete Account</div>
+                <div onClick={() => openDialog('deleteAccount')}>
+                  Delete Account
+                </div>
               </div>
             </div>
           ) : (
             <Link href='/Login'>Login</Link>
           )}
-          <dialog className={classes.dialog} open={isPasswordDialogOpen}>
-            <form method='dialog' onSubmit={handlePasswordChange}>
-              <label>
-                New Password:
-                <input
-                  type='password'
-                  name='newPassword'
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </label>
-              <div className={classes.buttons}>
-                <button type='submit'>Change Password</button>
-                <button
-                  type='button'
-                  onClick={() => setIsPasswordDialogOpen(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </dialog>
+          {isPasswordDialogOpen && dialogType === 'changePassword' && (
+            <PasswordDialog
+              title='Change Password'
+              description='Enter your current password and your new password.'
+              buttonLabel='Change Password'
+              onSubmit={handlePasswordChange}
+              showNewPasswordField={true}
+              closeDialog={() => setIsPasswordDialogOpen(false)}
+            />
+          )}
+          {isPasswordDialogOpen && dialogType === 'deleteAccount' && (
+            <PasswordDialog
+              title='Delete Account'
+              description='Enter your current password to delete your account.'
+              buttonLabel='Delete Account'
+              onSubmit={handleDeleteAccount}
+              showNewPasswordField={false}
+              closeDialog={() => setIsPasswordDialogOpen(false)}
+            />
+          )}
         </nav>
         {children}
       </body>

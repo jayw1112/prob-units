@@ -4,6 +4,7 @@
     'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
 
   --rich-black: #011627;
+  --rich-black1: #011627ea;
   --rich-black2: #011627cc;
   --rich-black-light: #011627a2;
   --blue: #2a72c5;
@@ -13,9 +14,11 @@
   --blue-dark2: #1c54949a;
   --slate-gray: #5f758e;
   --slate-gray-light: #5f758ea2;
+  --white: #f0e7d8;
   --antique-white: #f0e7d8;
   --antique-white2: #fffdf9ea;
   --antique-white-light: #f0e7d8a2;
+  --warning: #ff291e;
 
   background-image: linear-gradient(
     96.5deg,
