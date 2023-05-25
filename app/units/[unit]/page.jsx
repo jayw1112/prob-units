@@ -44,12 +44,14 @@ const UnitPage = ({ params }) => {
       valueGetter: 'node.rowIndex + 1',
       width: 50,
       pinned: 'left',
+      filter: false,
     },
     {
       field: 'lastName',
       headerName: 'Last Name',
       colId: 'Last Name',
       sort: 'asc',
+      sortable: true,
     }, // - set to sort by Last Name ascending
     { field: 'firstName', headerName: 'First Name' },
     {
@@ -57,6 +59,7 @@ const UnitPage = ({ params }) => {
       headerName: 'PDJ #',
       type: 'numberColumn',
       editable: false,
+      filter: false,
     },
     {
       field: 'DOB',
@@ -85,6 +88,7 @@ const UnitPage = ({ params }) => {
     {
       field: 'Room',
       type: 'smallColumn',
+      filter: false,
       cellEditor: 'agSelectCellEditor',
       cellEditorParams: {
         values: [
@@ -119,12 +123,12 @@ const UnitPage = ({ params }) => {
 
   // DefaultColDef sets props common to all Columns
   const defaultColDef = useMemo(() => ({
-    sortable: true,
+    sortable: false,
     editable: true,
     width: 150,
     filter: true,
     cellStyle: {
-      borderRight: '1px solid rgba(49, 78, 167, 0.2)',
+      borderRight: '1px solid rgba(49, 78, 167, 0.05)',
       // borderBottom: '1px solid #444',
     },
   }))
@@ -137,6 +141,7 @@ const UnitPage = ({ params }) => {
       // filterParams: { comparator: myDateComparator },
       suppressMenu: true,
       width: 110,
+      filter: false,
     },
     numberColumn: {
       filter: 'agNumberColumnFilter',
