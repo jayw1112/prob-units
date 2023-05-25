@@ -75,7 +75,7 @@
   display: flex;
   justify-content: space-evenly;
   margin: 1rem auto;
-  width: 30%;
+  width: 35%;
   padding: 0.7rem;
   border-radius: 0.5rem;
   border: none;
@@ -84,6 +84,12 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
+  background-image: linear-gradient(
+    to right,
+    var(--blue-light) 0%,
+    var(--blue-dark2) 51%,
+    var(--rich-black) 100%
+  );
 }
 
 .formContainer button:hover {

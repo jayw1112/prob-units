@@ -4,9 +4,13 @@ import classes from './page.module.css'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { auth, onAuthStateChanged } from '@/public/firebase'
+import { useRouter } from 'next/navigation'
+import Spinner from './components/Loading/Spinner'
 
 export default function Home() {
   const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -17,82 +21,141 @@ export default function Home() {
     return () => unsubscribe()
   }, [])
 
+  const handleClick = (e) => {
+    e.preventDefault()
+    setLoading(true)
+    router.push(e.target.href)
+  }
+
   return (
     <main className={classes.main}>
       <div className={classes.description}>
-        <h1 className={classes.title}>Units: </h1>
         {user ? (
-          <ul>
-            <li>
-              <Link href='/units/UnitA'>A</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitB'>B</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitC'>C</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitD'>D</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitE'>E</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitF'>F</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitG'>G</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitH'>H</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitJ'>J</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitK'>K</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitL'>L</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitM'>M</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitN'>N</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitO'>O</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitP'>P</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitQ'>Q</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitR'>R</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitS'>S</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitW1'>W 1</Link>
-            </li>
-            <li>
-              <Link href='/units/UnitW2'>W 2</Link>
-            </li>
-            <li>
-              <Link href='/units/BoysR'>Boy's R</Link>
-            </li>
-            <li>
-              <Link href='/units/GirlsR'>Girl's R</Link>
-            </li>
-            <li>
-              <Link href='/units/MHU'>MHU</Link>
-            </li>
-          </ul>
+          loading ? (
+            <Spinner /> // Display the Spinner when loading is true
+          ) : (
+            <>
+              <h1 className={classes.title}>Units: </h1>
+
+              <ul>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitA'>
+                    A
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitB'>
+                    B
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitC'>
+                    C
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitD'>
+                    D
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitE'>
+                    E
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitF'>
+                    F
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitG'>
+                    G
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitH'>
+                    H
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitJ'>
+                    J
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitK'>
+                    K
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitL'>
+                    L
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitM'>
+                    M
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitN'>
+                    N
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitO'>
+                    O
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitP'>
+                    P
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitQ'>
+                    Q
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitR'>
+                    R
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitS'>
+                    S
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitW1'>
+                    W 1
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitW2'>
+                    W 2
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/BoysR'>
+                    Boy's R
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/GirlsR'>
+                    Girl's R
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/MHU'>
+                    MHU
+                  </Link>
+                </li>
+              </ul>
+            </>
+          )
         ) : (
           <h1 className={classes.title}>
             Please{' '}

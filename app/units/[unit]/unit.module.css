@@ -28,6 +28,13 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  /* create a gradient for the button */
+  background-image: linear-gradient(
+    to right,
+    var(--blue-light) 0%,
+    var(--blue-dark2) 51%,
+    var(--rich-black) 100%
+  );
 }
 
 .bigButton {
@@ -35,7 +42,7 @@
 }
 
 .gridContainer button:hover {
-  background-color: var(--slate-gray);
+  background-color: var(--slate-gray2);
   scale: 1.04;
 }
 

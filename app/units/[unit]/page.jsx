@@ -14,6 +14,7 @@ import { onAuthStateChanged } from '@firebase/auth'
 import { useRouter } from 'next/navigation'
 import classes from './unit.module.css'
 import { getCurrentDate } from '@/public/utility'
+import Spinner from '@/app/components/Loading/Spinner'
 
 const UnitPage = ({ params }) => {
   const gridRef = useRef() // Optional - for accessing Grid's API
@@ -21,6 +22,7 @@ const UnitPage = ({ params }) => {
   const router = useRouter()
   const gridContainerRef = useRef(null)
   const date = getCurrentDate()
+  const [loading, setLoading] = useState(true)
 
   const { inmates, addInmate, updateInmate, deleteInmate } = useInmates(
     params.unit
@@ -160,14 +162,6 @@ const UnitPage = ({ params }) => {
     console.log('cellClicked', event)
   }, [])
 
-  // useEffect(() => {
-  //   async function fetchInmates() {
-  //     const inmates = await getInmates(db, params.unit)
-  //     setRowData(inmates)
-  //   }
-  //   fetchInmates()
-  // }, [params.unit])
-
   // Reidirect unauthorized users to login page
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -184,12 +178,14 @@ const UnitPage = ({ params }) => {
 
   useEffect(() => {
     async function fetchInmates() {
+      setLoading(true)
       const inmates = await getInmates(db, params.unit)
       setRowData(inmates)
       console.log(
         `${params.unit.replace('Unit', 'Unit ')} data fetched at`,
         new Date()
       )
+      setLoading(false)
     }
 
     // Fetch inmates immediately
@@ -397,41 +393,57 @@ const UnitPage = ({ params }) => {
 
   return (
     <div className={classes.gridContainer} ref={gridContainerRef}>
-      <h1 className={classes.title}>{params.unit.replace('Unit', 'Unit ')}</h1>
-      {/* create an h3 that displays the current date */}
-      <h3 className={classes.date}>{date}</h3>
-      {/* Example using Grid's API */}
-      {/* <button onClick={buttonListener}>Push Me</button> */}
-      {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
-      <div className='ag-theme-alpine' style={{ width: 1580, height: 650 }}>
-        <AgGridReact
-          ref={gridRef} // Ref for accessing Grid's API
-          rowData={rowData} // Row Data for Rows
-          columnDefs={columnDefs} // Column Defs for Columns
-          defaultColDef={defaultColDef} // Default Column Properties
-          columnTypes={columnTypes} // Column Types
-          animateRows={true} // Optional - set to 'true' to have rows animate when sorted
-          rowSelection='multiple' // Options - allows click selection of rows
-          onCellClicked={cellClickedListener} // Optional - registering for Grid Event
-          onCellValueChanged={onCellValueChanged}
-        />
-      </div>
-      <button className={classes.bigButton} onClick={openDialog}>
-        Add New Row
-      </button>
-      <NewInmateDialog
-        isOpen={isDialogOpen}
-        onOk={handleDialogOk}
-        onCancel={handleDialogCancel}
-        onChange={handleInputChange}
-        inmateData={newInmateData}
-      />
-      <button className={classes.bigButton} type='button' onClick={deleteRow}>
-        Delete Row
-      </button>
-      <button className={classes.bigButton} onClick={exportToExcel}>
-        Export Spreadsheet
-      </button>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <>
+          <h1 className={classes.title}>
+            {params.unit
+              .replace('Unit', 'Unit ')
+              .replace('W1', 'W 1')
+              .replace('W2', 'W 2')
+              .replace('BoysR', "Boy's Receiving")
+              .replace('GirlsR', "Girl's Receiving")}
+          </h1>
+          <h3 className={classes.date}>{date}</h3>
+          {/* Example using Grid's API */}
+          {/* <button onClick={buttonListener}>Push Me</button> */}
+          {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
+          <div className='ag-theme-alpine' style={{ width: 1580, height: 650 }}>
+            <AgGridReact
+              ref={gridRef} // Ref for accessing Grid's API
+              rowData={rowData} // Row Data for Rows
+              columnDefs={columnDefs} // Column Defs for Columns
+              defaultColDef={defaultColDef} // Default Column Properties
+              columnTypes={columnTypes} // Column Types
+              animateRows={true} // Optional - set to 'true' to have rows animate when sorted
+              rowSelection='multiple' // Options - allows click selection of rows
+              onCellClicked={cellClickedListener} // Optional - registering for Grid Event
+              onCellValueChanged={onCellValueChanged}
+            />
+          </div>
+          <button className={classes.bigButton} onClick={openDialog}>
+            Add New Row
+          </button>
+          <NewInmateDialog
+            isOpen={isDialogOpen}
+            onOk={handleDialogOk}
+            onCancel={handleDialogCancel}
+            onChange={handleInputChange}
+            inmateData={newInmateData}
+          />
+          <button
+            className={classes.bigButton}
+            type='button'
+            onClick={deleteRow}
+          >
+            Delete Row
+          </button>
+          <button className={classes.bigButton} onClick={exportToExcel}>
+            Export Spreadsheet
+          </button>
+        </>
+      )}
     </div>
   )
 }
