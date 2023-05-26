@@ -54,29 +54,6 @@ export default function RootLayout({ children }) {
     router.push('/Login') // redirect to the login page
   }
 
-  // const handleDeleteAccount = async () => {
-  //   const confirmation = window.confirm(
-  //     'Are you sure you want to delete your account? This action cannot be undone.'
-  //   )
-  //   if (confirmation) {
-  //     try {
-  //       // Get the employeeNumber and lastName from the session
-  //       const employeeNumber = sessionStorage.getItem('employeeNumber')
-  //       const lastName = sessionStorage.getItem('lastName')
-
-  //       // Delete the Firestore document for the user
-  //       await deleteDoc(doc(db, 'Users', `${employeeNumber}-${lastName}`))
-
-  //       // Delete the user's account
-  //       await deleteUser(auth.currentUser)
-
-  //       router.push('/Login') // redirect to the login page
-  //     } catch (error) {
-  //       console.error('Error deleting account: ', error)
-  //     }
-  //   }
-  // }
-
   const openDialog = (type) => {
     setDialogType(type)
     setIsPasswordDialogOpen(true)

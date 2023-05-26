@@ -46,3 +46,19 @@ body {
   margin: 0;
   padding: 0;
 }
+
+/* Define the scrollbar width and color */
+::-webkit-scrollbar {
+  width: 0.6rem;
+  background: linear-gradient(to bottom, var(--blue-light2), var(--blue-light));
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--blue-dark);
+  border-radius: 1rem;
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(to bottom, var(--blue-light2), var(--blue-light));
+  border-radius: 1rem;
+}

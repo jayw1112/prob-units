@@ -191,8 +191,8 @@ const UnitPage = ({ params }) => {
     // Fetch inmates immediately
     fetchInmates()
 
-    // Then fetch inmates every 5 minutes
-    const intervalId = setInterval(fetchInmates, 5 * 60 * 1000)
+    // Then fetch inmates every 15 minutes
+    const intervalId = setInterval(fetchInmates, 15 * 60 * 1000)
 
     // Clear the interval when the component unmounts
     return () => clearInterval(intervalId)
