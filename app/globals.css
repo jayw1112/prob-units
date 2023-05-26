@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Encode+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
 :root {
-  --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
+  /* --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
     'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
-    'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
+    'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace; */
 
   --rich-black: #011627;
   --rich-black1: #011627ea;
@@ -13,6 +15,7 @@
   --blue-dark: #1c5494;
   --blue-dark2: #1c54949a;
   --slate-gray: #5f758e;
+  --slate-gray-date: #5f758ed0;
   --slate-gray-light: #5f758ea2;
   --white: #f0e7d8;
   --antique-white: #f0e7d8;
@@ -25,22 +28,16 @@
     var(--blue-light) 4.4%,
     var(--antique-white2) 17.7%
   );
+
+  font-family: 'Encode Sans', sans-serif;
 }
 
-.ag-theme-alpine {
-  --ag-foreground-color: rgb(126, 46, 132);
-  --ag-background-color: rgb(249, 245, 227);
-  --ag-header-foreground-color: rgb(204, 245, 172);
-  --ag-header-background-color: rgb(209, 64, 129);
-  --ag-odd-row-background-color: rgb(0, 0, 0, 0.03);
-  --ag-header-column-resize-handle-color: rgb(126, 46, 132);
-
-  --ag-font-size: 17px;
-  --ag-font-family: monospace;
+button {
+  font-family: 'Encode Sans', sans-serif;
 }
 
 body {
-  font-family: var(--font-mono);
+  /* font-family: var(--font-mono); */
   /* background-color: var(--blue-light2); */
   color: var(--antique-white);
   margin: 0;
@@ -49,7 +46,8 @@ body {
 
 /* Define the scrollbar width and color */
 ::-webkit-scrollbar {
-  width: 0.6rem;
+  width: 0.65rem;
+  height: 0.8rem;
   background: linear-gradient(to bottom, var(--blue-light2), var(--blue-light));
 }
 

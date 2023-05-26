@@ -30,6 +30,7 @@ export default function Home() {
   return (
     <main className={classes.main}>
       <div className={classes.description}>
+        <h3>Welcome {user && user.displayName}</h3>
         {user ? (
           loading ? (
             <Spinner /> // Display the Spinner when loading is true

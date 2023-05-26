@@ -2,7 +2,7 @@
 
 import { auth, db } from '@/public/firebase'
 import './globals.css'
-import { Inter } from 'next/font/google'
+// import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
@@ -18,7 +18,7 @@ import { deleteDoc, doc, getDoc } from 'firebase/firestore'
 import classes from './layout.module.css'
 import { PasswordDialog } from './components/Dialog/PasswordDialog'
 
-const inter = Inter({ subsets: ['latin'] })
+// const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'Probation Units',
@@ -163,7 +163,7 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang='en'>
-      <body className={inter.className}>
+      <body>
         <nav className={classes.navbar}>
           <Link className={classes.home} href='/'>
             {/* Home */}
