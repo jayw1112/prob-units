@@ -33,6 +33,7 @@ export default function RootLayout({ children }) {
   const [isPasswordValid, setIsPasswordValid] = useState(true)
   const [currentPassword, setCurrentPassword] = useState('')
   const [dialogType, setDialogType] = useState(null)
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -102,7 +103,13 @@ export default function RootLayout({ children }) {
           alert('Please re-login and try again.')
           handleSignOut()
         } else if (error.code === 'auth/wrong-password') {
-          alert('Incorrect current password.')
+          setErrorMessage('Incorrect current password.')
+        } else if (error.code === 'auth/too-many-requests') {
+          setErrorMessage(
+            'Too many failed attempts, please try again later or reset password.'
+          )
+        } else {
+          setErrorMessage('Something went wrong, please try again.')
         }
       }
     } else {
@@ -138,7 +145,11 @@ export default function RootLayout({ children }) {
           alert('Please re-login and try again.')
           handleSignOut()
         } else if (error.code === 'auth/wrong-password') {
-          alert('Incorrect current password.')
+          setErrorMessage('Incorrect current password.')
+        } else if (error.code === 'auth/too-many-requests') {
+          setErrorMessage('Too many failed attempts, please try again later.')
+        } else {
+          setErrorMessage('Something went wrong, please try again.')
         }
       }
     } else {
@@ -181,6 +192,8 @@ export default function RootLayout({ children }) {
               onSubmit={handlePasswordChange}
               showNewPasswordField={true}
               closeDialog={() => setIsPasswordDialogOpen(false)}
+              errorMessage={errorMessage}
+              setErrorMessage={setErrorMessage}
             />
           )}
           {isPasswordDialogOpen && dialogType === 'deleteAccount' && (
@@ -191,6 +204,8 @@ export default function RootLayout({ children }) {
               onSubmit={handleDeleteAccount}
               showNewPasswordField={false}
               closeDialog={() => setIsPasswordDialogOpen(false)}
+              errorMessage={errorMessage}
+              setErrorMessage={setErrorMessage}
             />
           )}
         </nav>

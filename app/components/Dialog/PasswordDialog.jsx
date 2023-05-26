@@ -10,6 +10,8 @@ export function PasswordDialog({
   onSubmit,
   showNewPasswordField,
   closeDialog,
+  errorMessage,
+  setErrorMessage,
 }) {
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -76,6 +78,8 @@ export function PasswordDialog({
             </p>
           )
         )}
+        {/* <p className={classes.warning} id='error-message'></p> */}
+        {errorMessage && <p className={classes.warning}>{errorMessage}</p>}
         <div className={classes.buttons}>
           <button type='submit'>{buttonLabel}</button>
           <button
@@ -85,6 +89,7 @@ export function PasswordDialog({
               setIsPasswordValid(true)
               setCurrentPassword('')
               setNewPassword('')
+              setErrorMessage('')
             }}
           >
             Cancel

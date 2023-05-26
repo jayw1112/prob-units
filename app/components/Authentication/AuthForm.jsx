@@ -62,7 +62,7 @@ function AuthForm() {
   return (
     <div className={classes.formContainer}>
       <h2>{isSignUp ? 'Sign Up' : 'Log In'}</h2>
-      {error && <p>{error}</p>}
+      {error && <p className={classes.warning}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <label htmlFor='email'>Email</label>
         <input
