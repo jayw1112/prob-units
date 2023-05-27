@@ -34,6 +34,7 @@ export default function RootLayout({ children }) {
   const [currentPassword, setCurrentPassword] = useState('')
   const [dialogType, setDialogType] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
+  const [openOverlay, setOpenOverlay] = useState(false)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -58,7 +59,28 @@ export default function RootLayout({ children }) {
   const openDialog = (type) => {
     setDialogType(type)
     setIsPasswordDialogOpen(true)
+    setOpenOverlay(true)
   }
+
+  const closeDialog = () => {
+    setIsPasswordDialogOpen(false)
+    setOpenOverlay(false)
+    setErrorMessage('')
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        closeDialog()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
 
   const openPasswordDialog = () => {
     openDialog('changePassword')
@@ -191,9 +213,10 @@ export default function RootLayout({ children }) {
               buttonLabel='Change Password'
               onSubmit={handlePasswordChange}
               showNewPasswordField={true}
-              closeDialog={() => setIsPasswordDialogOpen(false)}
+              closeDialog={closeDialog}
               errorMessage={errorMessage}
               setErrorMessage={setErrorMessage}
+              openOverlay={openOverlay}
             />
           )}
           {isPasswordDialogOpen && dialogType === 'deleteAccount' && (
@@ -203,9 +226,10 @@ export default function RootLayout({ children }) {
               buttonLabel='Delete Account'
               onSubmit={handleDeleteAccount}
               showNewPasswordField={false}
-              closeDialog={() => setIsPasswordDialogOpen(false)}
+              closeDialog={closeDialog}
               errorMessage={errorMessage}
               setErrorMessage={setErrorMessage}
+              openOverlay={openOverlay}
             />
           )}
         </nav>

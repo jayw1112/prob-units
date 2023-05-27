@@ -262,7 +262,30 @@ const UnitPage = ({ params }) => {
   // This function will be called when the user clicks the "Cancel" button in the dialog
   const handleDialogCancel = () => {
     setIsDialogOpen(false)
+    // clear inpt fields
+    setNewInmateData({
+      pdjNumber: '',
+      firstName: '',
+      lastName: '',
+      DOB: '',
+      Intake: '',
+    })
   }
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        handleDialogCancel()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+
+    // Cleanup function to remove the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
 
   // This function will be called when the user changes the input fields in the dialog
   const handleInputChange = (event) => {
