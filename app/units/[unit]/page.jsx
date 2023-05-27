@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation'
 import classes from './unit.module.css'
 import { getCurrentDate } from '@/public/utility'
 import Spinner from '@/app/components/Loading/Spinner'
+import AgeCalculator from '@/app/components/Dialog/AgeCalculator'
 
 const UnitPage = ({ params }) => {
   const gridRef = useRef() // Optional - for accessing Grid's API
@@ -23,6 +24,8 @@ const UnitPage = ({ params }) => {
   const gridContainerRef = useRef(null)
   const date = getCurrentDate()
   const [loading, setLoading] = useState(true)
+  const [isAgeCalculatorOpen, setIsAgeCalculatorOpen] = useState(false)
+  const [selectedRow, setSelectedRow] = useState(null)
 
   const { inmates, addInmate, updateInmate, deleteInmate } = useInmates(
     params.unit
@@ -352,6 +355,19 @@ const UnitPage = ({ params }) => {
     return age
   }
 
+  const onRowSelected = (event) => {
+    setSelectedRow(event.node.data)
+    if (event.node.selected) {
+      setIsAgeCalculatorOpen(true) // Open the AgeCalculator
+    } else {
+      // Only close the AgeCalculator if there are no rows selected
+      const selectedNodes = gridRef.current.api.getSelectedNodes()
+      if (selectedNodes.length === 0) {
+        setIsAgeCalculatorOpen(false) // Close the AgeCalculator
+      }
+    }
+  }
+
   const exportToExcel = () => {
     const ws = XLSX.utils.json_to_sheet(
       rowData.map((row) => ({
@@ -414,6 +430,20 @@ const UnitPage = ({ params }) => {
     }
   }, [])
 
+  const updateAge = async (pdjNumber, age) => {
+    // Update the age in Firebase
+    await updateInmate(pdjNumber, { ...selectedRow, Age: age })
+
+    // Update the age in the grid
+    const updatedRowData = rowData.map((row) => {
+      if (row.pdjNumber === pdjNumber) {
+        return { ...row, Age: age }
+      }
+      return row
+    })
+    setRowData(updatedRowData)
+  }
+
   return (
     <div className={classes.gridContainer} ref={gridContainerRef}>
       {loading ? (
@@ -443,6 +473,7 @@ const UnitPage = ({ params }) => {
               rowSelection='multiple' // Options - allows click selection of rows
               onCellClicked={cellClickedListener} // Optional - registering for Grid Event
               onCellValueChanged={onCellValueChanged}
+              onRowSelected={onRowSelected}
             />
           </div>
           <button className={classes.bigButton} onClick={openDialog}>
@@ -454,6 +485,7 @@ const UnitPage = ({ params }) => {
             onCancel={handleDialogCancel}
             onChange={handleInputChange}
             inmateData={newInmateData}
+            onRowSelected={onRowSelected}
           />
           <button
             className={classes.bigButton}
@@ -462,6 +494,13 @@ const UnitPage = ({ params }) => {
           >
             Delete Row
           </button>
+          {isAgeCalculatorOpen && (
+            <AgeCalculator
+              onClose={() => setIsAgeCalculatorOpen(false)}
+              selectedRow={selectedRow}
+              updateAge={updateAge}
+            />
+          )}
           <button className={classes.bigButton} onClick={exportToExcel}>
             Export Spreadsheet
           </button>
