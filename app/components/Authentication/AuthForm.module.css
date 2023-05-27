@@ -71,6 +71,10 @@
   outline: none;
 }
 
+.formContainer form input::placeholder {
+  color: rgba(0, 0, 0, 0.295);
+}
+
 .formContainer button {
   display: flex;
   justify-content: space-evenly;

@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   height: 80vh;
-  width: 100vw;
+  width: 100%;
   /* create a gradient for the background  */
   background: linear-gradient(
     90deg,
@@ -75,4 +75,55 @@
 .main ul li a:hover {
   background-color: var(--slate-gray);
   color: var(--antique-white);
+}
+
+@media (width <= 616px) {
+  /* .main {
+    justify-content: start;
+    padding: 0 1rem;
+  } */
+
+  .main ul {
+    column-count: 2;
+    padding: 0;
+  }
+
+  .main ul li {
+    margin: 0 1rem;
+    padding: 0;
+  }
+}
+
+@media (617px <= width <= 895px) {
+  /* .main {
+    justify-content: start;
+    padding: 0 1rem;
+  } */
+
+  .main ul {
+    column-count: 3;
+    padding: 0;
+  }
+
+  .main ul li {
+    margin: 0 1rem;
+    padding: 0;
+  }
+}
+
+@media (896px <= width <= 1187px) {
+  /* .main {
+    justify-content: start;
+    padding: 0 1rem;
+  } */
+
+  .main ul {
+    column-count: 4;
+    padding: 0;
+  }
+
+  .main ul li {
+    margin: 0 0.5rem;
+    /* padding: 0.5rem; */
+  }
 }

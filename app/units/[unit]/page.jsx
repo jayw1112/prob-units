@@ -210,7 +210,6 @@ const UnitPage = ({ params }) => {
     const { data } = event
     const { pdjNumber } = data // assuming pdjNumber is the unique identifier
     // Update Firestore
-    // await updateInmate(db, params.unit, pdjNumber, data)
     await updateInmate(pdjNumber, data)
   }
 
@@ -462,7 +461,7 @@ const UnitPage = ({ params }) => {
           {/* Example using Grid's API */}
           {/* <button onClick={buttonListener}>Push Me</button> */}
           {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
-          <div className='ag-theme-alpine' style={{ width: 1580, height: 650 }}>
+          <div className='ag-theme-alpine ag-grid'>
             <AgGridReact
               ref={gridRef} // Ref for accessing Grid's API
               rowData={rowData} // Row Data for Rows

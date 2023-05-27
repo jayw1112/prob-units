@@ -71,6 +71,8 @@ function AuthForm() {
           id='email'
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          placeholder='user@probation.lacounty.gov'
+          title='Please enter a valid LA County Probation email address. (Ex. @probation.lacounty.gov)'
         />
         <label htmlFor='password'>Password</label>
         <input

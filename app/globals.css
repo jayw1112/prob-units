@@ -60,3 +60,34 @@ body {
   background: linear-gradient(to bottom, var(--blue-light2), var(--blue-light));
   border-radius: 1rem;
 }
+
+.ag-grid {
+  width: 100%;
+  height: 660px;
+  margin: 0 auto;
+  padding: 0 0.4rem 0.4rem 0.4rem;
+}
+
+@media (width <= 620px) {
+  .ag-grid {
+    width: 80%;
+  }
+}
+
+/* @media (orientation: landscape) {
+  .ag-grid {
+    width: 100vh;
+    height: 70vh;
+  }
+} */
+
+/* @media print {
+  .ag-grid {
+    width: 100%;
+    transform: scale(0.9);
+  }
+
+  button {
+    display: none;
+  }
+} */
