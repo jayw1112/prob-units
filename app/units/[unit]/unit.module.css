@@ -67,3 +67,10 @@
   color: var(--slate-gray-date);
   margin: 1rem;
 }
+
+@media print {
+  .title,
+  .date {
+    visibility: visible;
+  }
+}

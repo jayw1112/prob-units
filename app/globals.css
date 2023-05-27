@@ -81,13 +81,23 @@ body {
   }
 } */
 
-/* @media print {
-  .ag-grid {
-    width: 100%;
-    transform: scale(0.9);
+@media print {
+  /* Hide all elements */
+  body * {
+    visibility: hidden;
   }
 
-  button {
-    display: none;
+  /* Show only the ag-grid and its children */
+  .ag-grid,
+  .ag-grid * {
+    visibility: visible;
   }
-} */
+
+  /* Position the ag-grid at the top of the page */
+  .ag-grid {
+    position: absolute;
+    left: -5rem;
+    top: 6rem;
+    scale: 0.9;
+  }
+}

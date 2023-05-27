@@ -26,6 +26,7 @@ const UnitPage = ({ params }) => {
   const [loading, setLoading] = useState(true)
   const [isAgeCalculatorOpen, setIsAgeCalculatorOpen] = useState(false)
   const [selectedRow, setSelectedRow] = useState(null)
+  const [isPrintLayout, setIsPrintLayout] = useState(false)
 
   const { inmates, addInmate, updateInmate, deleteInmate } = useInmates(
     params.unit
@@ -443,6 +444,14 @@ const UnitPage = ({ params }) => {
     setRowData(updatedRowData)
   }
 
+  const togglePrintLayout = useCallback(() => {
+    const newIsPrintLayout = !isPrintLayout
+    gridRef.current.api.setDomLayout(newIsPrintLayout ? 'print' : null)
+    setTimeout(() => {
+      setIsPrintLayout(newIsPrintLayout)
+    }, 0)
+  }, [isPrintLayout])
+
   return (
     <div className={classes.gridContainer} ref={gridContainerRef}>
       {loading ? (
@@ -461,7 +470,10 @@ const UnitPage = ({ params }) => {
           {/* Example using Grid's API */}
           {/* <button onClick={buttonListener}>Push Me</button> */}
           {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
-          <div className='ag-theme-alpine ag-grid'>
+          <div
+            className='ag-theme-alpine ag-grid'
+            style={{ height: isPrintLayout ? 'auto' : '660px' }}
+          >
             <AgGridReact
               ref={gridRef} // Ref for accessing Grid's API
               rowData={rowData} // Row Data for Rows
@@ -473,6 +485,7 @@ const UnitPage = ({ params }) => {
               onCellClicked={cellClickedListener} // Optional - registering for Grid Event
               onCellValueChanged={onCellValueChanged}
               onRowSelected={onRowSelected}
+              domLayout={isPrintLayout ? 'print' : null}
             />
           </div>
           <button className={classes.bigButton} onClick={openDialog}>
@@ -500,6 +513,12 @@ const UnitPage = ({ params }) => {
               updateAge={updateAge}
             />
           )}
+          <button className={classes.bigButton} onClick={togglePrintLayout}>
+            {isPrintLayout
+              ? 'Switch to Normal Layout'
+              : 'Switch to Print Layout'}
+          </button>
+
           <button className={classes.bigButton} onClick={exportToExcel}>
             Export Spreadsheet
           </button>
