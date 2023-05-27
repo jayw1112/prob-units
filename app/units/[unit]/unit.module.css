@@ -74,3 +74,16 @@
     visibility: visible;
   }
 }
+
+@media (width <= 620px) {
+  .bigButton {
+    width: 30%;
+  }
+}
+
+@media (621px <= width <= 1034px) {
+  .bigButton {
+    width: 22%;
+    min-width: 20%;
+  }
+}

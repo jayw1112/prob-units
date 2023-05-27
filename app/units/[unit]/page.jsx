@@ -488,7 +488,11 @@ const UnitPage = ({ params }) => {
               domLayout={isPrintLayout ? 'print' : null}
             />
           </div>
-          <button className={classes.bigButton} onClick={openDialog}>
+          <button
+            className={classes.bigButton}
+            onClick={openDialog}
+            title='Add a new row to the spreadsheet.'
+          >
             Add New Row
           </button>
           <NewInmateDialog
@@ -503,6 +507,7 @@ const UnitPage = ({ params }) => {
             className={classes.bigButton}
             type='button'
             onClick={deleteRow}
+            title='Delete the selected row.'
           >
             Delete Row
           </button>
@@ -513,13 +518,30 @@ const UnitPage = ({ params }) => {
               updateAge={updateAge}
             />
           )}
-          <button className={classes.bigButton} onClick={togglePrintLayout}>
+          <button
+            className={classes.bigButton}
+            onClick={togglePrintLayout}
+            title='Switch between normal and print layouts.'
+          >
             {isPrintLayout
               ? 'Switch to Normal Layout'
               : 'Switch to Print Layout'}
           </button>
+          {isPrintLayout && (
+            <button
+              className={classes.bigButton}
+              onClick={print}
+              title='Print or save spreadsheet to PDF.'
+            >
+              Print
+            </button>
+          )}
 
-          <button className={classes.bigButton} onClick={exportToExcel}>
+          <button
+            className={classes.bigButton}
+            onClick={exportToExcel}
+            title='Export to .xlsx file and import to Excel, Google Sheets, etc.'
+          >
             Export Spreadsheet
           </button>
         </>

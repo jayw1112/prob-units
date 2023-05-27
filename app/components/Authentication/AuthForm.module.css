@@ -63,7 +63,7 @@
 }
 
 .formContainer form input:hover {
-  background-color: var(--slate-gray-light);
+  background-color: var(--slate-gray);
   color: var(--rich-black);
 }
 
@@ -103,10 +103,35 @@
 }
 
 .warning {
-  color: var(--warning);
+  color: var(--warning2);
   font-size: 1rem;
   font-weight: 600;
   padding: 0.5rem 1rem;
   margin-bottom: 1rem;
   text-align: center;
+}
+
+@media (width <= 408px) {
+  .formContainer {
+    width: 85%;
+  }
+
+  .formContainer button {
+    width: 60%;
+    scale: 0.85;
+  }
+
+  .formContainer form input {
+    width: 70%;
+  }
+}
+
+@media (409px <= width <= 768px) {
+  .formContainer {
+    width: 70%;
+  }
+
+  .formContainer button {
+    width: 50%;
+  }
 }

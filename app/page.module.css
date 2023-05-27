@@ -92,6 +92,10 @@
     margin: 0 1rem;
     padding: 0;
   }
+
+  .title {
+    font-size: 1.8rem;
+  }
 }
 
 @media (617px <= width <= 895px) {

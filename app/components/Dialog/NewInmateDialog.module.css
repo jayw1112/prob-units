@@ -64,3 +64,15 @@
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 }
+
+@media (width <= 620px) {
+  .dialog {
+    width: 40%;
+  }
+  .buttons button {
+    width: 80%;
+  }
+  .dialog input {
+    width: 60%;
+  }
+}
