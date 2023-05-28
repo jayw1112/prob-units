@@ -137,16 +137,19 @@ const UnitPage = ({ params }) => {
   ])
 
   // DefaultColDef sets props common to all Columns
-  const defaultColDef = useMemo(() => ({
-    sortable: false,
-    editable: true,
-    width: 150,
-    filter: true,
-    cellStyle: {
-      borderRight: '1px solid rgba(49, 78, 167, 0.05)',
-      // borderBottom: '1px solid #444',
-    },
-  }))
+  const defaultColDef = useMemo(
+    () => ({
+      sortable: false,
+      editable: true,
+      width: 150,
+      filter: true,
+      cellStyle: {
+        borderRight: '1px solid rgba(49, 78, 167, 0.05)',
+        // borderBottom: '1px solid #444',
+      },
+    }),
+    []
+  )
 
   // define a column type (you can define as many as you like)
   const columnTypes = {
@@ -183,7 +186,7 @@ const UnitPage = ({ params }) => {
 
     // Cleanup subscription on unmount
     return () => unsubscribe()
-  }, [])
+  }, [router])
 
   useEffect(() => {
     async function fetchInmates() {

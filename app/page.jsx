@@ -141,12 +141,12 @@ function Home() {
                 </li>
                 <li>
                   <Link onClick={handleClick} href='/units/BoysR'>
-                    Boy's R
+                    Boy&apos;s R
                   </Link>
                 </li>
                 <li>
                   <Link onClick={handleClick} href='/units/GirlsR'>
-                    Girl's R
+                    Girl&apos;s R
                   </Link>
                 </li>
                 <li>

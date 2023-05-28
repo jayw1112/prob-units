@@ -20,7 +20,7 @@ function isVerified(Component) {
 
       // Cleanup subscription on unmount
       return () => unsubscribe()
-    }, [])
+    }, [router])
 
     // Show the spinner while loading
     if (loading) {

@@ -19,7 +19,7 @@ function VerificationPage() {
 
     // Cleanup subscription on unmount
     return () => unsubscribe()
-  }, [])
+  }, [router])
 
   const handleResendVerificationEmail = async () => {
     try {
