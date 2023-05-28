@@ -30,12 +30,12 @@ function Home() {
   return (
     <main className={classes.main}>
       <div className={classes.description}>
-        {user && <h3>Welcome {user && user.displayName}</h3>}
         {user ? (
           loading ? (
             <Spinner /> // Display the Spinner when loading is true
           ) : (
             <>
+              {user && <h3>Welcome {user && user.displayName}</h3>}
               <h1 className={classes.title}>Units: </h1>
 
               <ul>

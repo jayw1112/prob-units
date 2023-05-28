@@ -28,6 +28,10 @@ const UnitPage = ({ params }) => {
   const [isAgeCalculatorOpen, setIsAgeCalculatorOpen] = useState(false)
   const [selectedRow, setSelectedRow] = useState(null)
   const [isPrintLayout, setIsPrintLayout] = useState(false)
+  const [error, setError] = useState(null)
+  const [noRowsOverlay, setNoRowsOverlay] = useState(
+    'Error loading data, please refresh the page or try again later.'
+  )
 
   const { inmates, addInmate, updateInmate, deleteInmate } = useInmates(
     params.unit
@@ -183,14 +187,32 @@ const UnitPage = ({ params }) => {
 
   useEffect(() => {
     async function fetchInmates() {
-      setLoading(true)
-      const inmates = await getInmates(db, params.unit)
-      setRowData(inmates)
-      console.log(
-        `${params.unit.replace('Unit', 'Unit ')} data fetched at`,
-        new Date()
-      )
-      setLoading(false)
+      try {
+        setLoading(true)
+        const inmates = await getInmates(db, params.unit)
+        setRowData(inmates)
+        console.log(
+          `${params.unit.replace('Unit', 'Unit ')} data fetched at`,
+          new Date()
+        )
+        setLoading(false)
+        if (!navigator.onLine) {
+          setNoRowsOverlay(
+            'You are currently offline. Please check your internet connection.'
+          )
+        } else if (inmates.length === 0) {
+          setNoRowsOverlay('No rows to show, start by adding a new row.')
+        } else {
+          setNoRowsOverlay(
+            'Error loading data, please refresh the page or try again later.'
+          )
+        }
+      } catch (error) {
+        console.error('Error fetching data: ', error)
+        setError('Error fetching data, please try again.')
+        setNoRowsOverlay('Error fetching data, please try again.') // Set the overlay message to your custom error message
+        setLoading(false)
+      }
     }
 
     // Fetch inmates immediately
@@ -457,6 +479,8 @@ const UnitPage = ({ params }) => {
     <div className={classes.gridContainer} ref={gridContainerRef}>
       {loading ? (
         <Spinner />
+      ) : error ? (
+        <h1 className={classes.title}>{error}</h1>
       ) : (
         <>
           <h1 className={classes.title}>
@@ -487,6 +511,7 @@ const UnitPage = ({ params }) => {
               onCellValueChanged={onCellValueChanged}
               onRowSelected={onRowSelected}
               domLayout={isPrintLayout ? 'print' : null}
+              overlayNoRowsTemplate={noRowsOverlay} // Set the overlay template to your custom message
             />
           </div>
           <button
