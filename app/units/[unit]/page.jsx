@@ -16,6 +16,7 @@ import classes from './unit.module.css'
 import { getCurrentDate } from '@/public/utility'
 import Spinner from '@/app/components/Loading/Spinner'
 import AgeCalculator from '@/app/components/Dialog/AgeCalculator'
+import isVerified from '@/app/components/Authentication/isVerified'
 
 const UnitPage = ({ params }) => {
   const gridRef = useRef() // Optional - for accessing Grid's API
@@ -550,4 +551,4 @@ const UnitPage = ({ params }) => {
   )
 }
 
-export default UnitPage
+export default isVerified(UnitPage)

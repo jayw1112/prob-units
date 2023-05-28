@@ -1,10 +1,11 @@
 'use client'
 
-import { logIn, signUp } from '@/public/firebase'
+import { auth, logIn, signUp } from '@/public/firebase'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import classes from './AuthForm.module.css'
 import { resetPassword } from '@/public/firebase.utils'
+import { sendEmailVerification } from '@firebase/auth'
 
 function AuthForm() {
   const [isSignUp, setIsSignUp] = useState(false) // state to toggle between sign up and log in
@@ -16,6 +17,40 @@ function AuthForm() {
   const [error, setError] = useState('')
 
   const router = useRouter()
+
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault()
+
+  //   // Reset the error message
+  //   setError('')
+
+  //   // Validate the input fields
+  //   if (
+  //     !email ||
+  //     !password ||
+  //     (isSignUp && (!firstName || !lastName || !employeeNumber))
+  //   ) {
+  //     setError('All fields are required.')
+  //     return
+  //   }
+
+  // -----********------ Check if the email ends with @probation.lacounty.gov -----********------
+  // if (!email.endsWith('@probation.lacounty.gov')) {
+  //   setError('Please use an email that ends with @probation.lacounty.gov')
+  //   return
+  // }
+
+  //   try {
+  //     if (isSignUp) {
+  //       await signUp(email, password, firstName, lastName, employeeNumber)
+  //     } else {
+  //       await logIn(email, password)
+  //     }
+  //     router.push('/')
+  //   } catch (error) {
+  //     setError(error.message)
+  //   }
+  // }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -34,12 +69,27 @@ function AuthForm() {
     }
 
     try {
+      let user
       if (isSignUp) {
-        await signUp(email, password, firstName, lastName, employeeNumber)
+        user = await signUp(
+          email,
+          password,
+          firstName,
+          lastName,
+          employeeNumber
+        )
       } else {
-        await logIn(email, password)
+        user = await logIn(email, password)
       }
-      router.push('/')
+
+      await user.reload()
+
+      // Check if the user's email is verified
+      if (user.emailVerified) {
+        router.push('/')
+      } else {
+        router.push('/Verification')
+      }
     } catch (error) {
       setError(error.message)
     }
@@ -58,6 +108,19 @@ function AuthForm() {
       setError(error.message)
     }
   }
+
+  // const handleResendVerificationEmail = async () => {
+  //   if (!auth.currentUser) {
+  //     setError('Please sign up or log in first.')
+  //     return
+  //   }
+  //   try {
+  //     await sendEmailVerification(auth.currentUser)
+  //     alert('Verification email sent!')
+  //   } catch (error) {
+  //     setError(error.message)
+  //   }
+  // }
 
   return (
     <div className={classes.formContainer}>
@@ -118,6 +181,10 @@ function AuthForm() {
       {!isSignUp && (
         <button onClick={handleResetPassword}>Forgot Password?</button>
       )}
+      {/* <button onClick={handleResendVerificationEmail}>
+        Resend Verification Email
+      </button>
+ */}
       <dialog id='emailSentDialog'>
         <p>Password reset email sent!</p>
         <button

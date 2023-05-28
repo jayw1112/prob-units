@@ -6,8 +6,9 @@ import { useEffect, useState } from 'react'
 import { auth, onAuthStateChanged } from '@/public/firebase'
 import { useRouter } from 'next/navigation'
 import Spinner from './components/Loading/Spinner'
+import isVerified from './components/Authentication/isVerified'
 
-export default function Home() {
+function Home() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -170,3 +171,5 @@ export default function Home() {
     </main>
   )
 }
+
+export default isVerified(Home)
