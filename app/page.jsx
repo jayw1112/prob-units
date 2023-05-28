@@ -154,6 +154,11 @@ function Home() {
                     MHU
                   </Link>
                 </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/Extra'>
+                    Extra
+                  </Link>
+                </li>
               </ul>
             </>
           )
