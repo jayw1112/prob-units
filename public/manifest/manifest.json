@@ -3,7 +3,7 @@
   "background_color": "#5f758e",
   "display": "standalone",
   "scope": "/",
-  "start_url": "/http://localhost:3000/",
+  "start_url": "https://probation-units.web.app/",
   "name": "Probation Units",
   "short_name": "Prob-Units",
   "description": "Pop Sheet Editor",

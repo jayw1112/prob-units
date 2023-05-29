@@ -20,10 +20,10 @@ import { PasswordDialog } from './components/Dialog/PasswordDialog'
 
 // const inter = Inter({ subsets: ['latin'] })
 
-export const metadata = {
-  title: 'Probation Units',
-  description: 'View and edit probation units pop sheets',
-}
+// export const metadata = {
+//   title: 'Probation Units',
+//   description: 'View and edit probation units pop sheets',
+// }
 
 export default function RootLayout({ children }) {
   const router = useRouter()
