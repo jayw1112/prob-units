@@ -54,6 +54,10 @@
   transition: all 0.5s ease-out;
 }
 
+.container a {
+  text-decoration: none;
+}
+
 @media (width <= 768px) {
   .title {
     font-size: 1.7rem;
