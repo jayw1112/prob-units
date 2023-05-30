@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation'
 import { onAuthStateChanged } from '@firebase/auth'
 import { auth } from '@/public/firebase'
 import Spinner from '../Loading/Spinner'
+import classes from '../../../app/Verification/Verification.module.css'
 
 function isVerified(Component) {
   return function ProtectedRoute(props) {
@@ -24,7 +25,11 @@ function isVerified(Component) {
 
     // Show the spinner while loading
     if (loading) {
-      return <Spinner />
+      return (
+        <div className={classes.spinnerContainer}>
+          <Spinner />
+        </div>
+      )
     }
 
     return <Component {...props} />
