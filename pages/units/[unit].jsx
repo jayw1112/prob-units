@@ -11,14 +11,16 @@ import * as XLSX from 'xlsx'
 import NewInmateDialog from '@/app/components/Dialog/NewInmateDialog'
 import useInmates from '@/public/use-inmate-hook'
 import { onAuthStateChanged } from '@firebase/auth'
-import { useRouter } from 'next/navigation'
-import classes from './unit.module.css'
+// import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/router'
+import classes from '../../app/units/[unit]/unit.module.css'
 import { getCurrentDate } from '@/public/utility'
 import Spinner from '@/app/components/Loading/Spinner'
 import AgeCalculator from '@/app/components/Dialog/AgeCalculator'
 import isVerified from '@/app/components/Authentication/isVerified'
+import RootLayout from '@/app/layout'
 
-const UnitPage = ({ params }) => {
+const UnitPage = () => {
   const gridRef = useRef() // Optional - for accessing Grid's API
   const [rowData, setRowData] = useState() // Set rowData to Array of Objects, one Object per Row
   const router = useRouter()
@@ -33,9 +35,13 @@ const UnitPage = ({ params }) => {
     'Error loading data, please refresh the page or try again later.'
   )
 
-  const { inmates, addInmate, updateInmate, deleteInmate } = useInmates(
-    params.unit
-  )
+  // const { unit } = router.query
+  let unit
+  if (router && router.query) {
+    unit = router.query.unit
+  }
+
+  const { inmates, addInmate, updateInmate, deleteInmate } = useInmates(unit)
 
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [newInmateData, setNewInmateData] = useState({
@@ -192,10 +198,10 @@ const UnitPage = ({ params }) => {
     async function fetchInmates() {
       try {
         setLoading(true)
-        const inmates = await getInmates(db, params.unit)
+        const inmates = await getInmates(db, unit)
         setRowData(inmates)
         console.log(
-          `${params.unit.replace('Unit', 'Unit ')} data fetched at`,
+          `${unit.replace('Unit', 'Unit ')} data fetched at`,
           new Date()
         )
         setLoading(false)
@@ -226,7 +232,7 @@ const UnitPage = ({ params }) => {
 
     // Clear the interval when the component unmounts
     return () => clearInterval(intervalId)
-  }, [params.unit])
+  }, [unit])
 
   // Example using Grid's API
   // const buttonListener = useCallback((e) => {
@@ -479,103 +485,105 @@ const UnitPage = ({ params }) => {
   }, [isPrintLayout])
 
   return (
-    <div className={classes.gridContainer} ref={gridContainerRef}>
-      {loading ? (
-        <Spinner />
-      ) : error ? (
-        <h1 className={classes.title}>{error}</h1>
-      ) : (
-        <>
-          <h1 className={classes.title}>
-            {params.unit
-              .replace('Unit', 'Unit ')
-              .replace('W1', 'W 1')
-              .replace('W2', 'W 2')
-              .replace('BoysR', "Boy's Receiving")
-              .replace('GirlsR', "Girl's Receiving")}
-          </h1>
-          <h3 className={classes.date}>{date}</h3>
-          {/* Example using Grid's API */}
-          {/* <button onClick={buttonListener}>Push Me</button> */}
-          {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
-          <div
-            className='ag-theme-alpine ag-grid'
-            style={{ height: isPrintLayout ? 'auto' : '660px' }}
-          >
-            <AgGridReact
-              ref={gridRef} // Ref for accessing Grid's API
-              rowData={rowData} // Row Data for Rows
-              columnDefs={columnDefs} // Column Defs for Columns
-              defaultColDef={defaultColDef} // Default Column Properties
-              columnTypes={columnTypes} // Column Types
-              animateRows={true} // Optional - set to 'true' to have rows animate when sorted
-              rowSelection='multiple' // Options - allows click selection of rows
-              onCellClicked={cellClickedListener} // Optional - registering for Grid Event
-              onCellValueChanged={onCellValueChanged}
-              onRowSelected={onRowSelected}
-              domLayout={isPrintLayout ? 'print' : null}
-              overlayNoRowsTemplate={noRowsOverlay} // Set the overlay template to your custom message
-            />
-          </div>
-          <button
-            className={classes.bigButton}
-            onClick={openDialog}
-            title='Add a new row to the spreadsheet.'
-          >
-            Add New Row
-          </button>
-          <NewInmateDialog
-            isOpen={isDialogOpen}
-            onOk={handleDialogOk}
-            onCancel={handleDialogCancel}
-            onChange={handleInputChange}
-            inmateData={newInmateData}
-            onRowSelected={onRowSelected}
-          />
-          <button
-            className={classes.bigButton}
-            type='button'
-            onClick={deleteRow}
-            title='Delete the selected row.'
-          >
-            Delete Row
-          </button>
-          {isAgeCalculatorOpen && (
-            <AgeCalculator
-              onClose={() => setIsAgeCalculatorOpen(false)}
-              selectedRow={selectedRow}
-              updateAge={updateAge}
-            />
-          )}
-          <button
-            className={classes.bigButton}
-            onClick={togglePrintLayout}
-            title='Switch between normal and print layouts.'
-          >
-            {isPrintLayout
-              ? 'Switch to Normal Layout'
-              : 'Switch to Print Layout'}
-          </button>
-          {isPrintLayout && (
+    <RootLayout useHtmlBody={false}>
+      <div className={classes.gridContainer} ref={gridContainerRef}>
+        {loading ? (
+          <Spinner />
+        ) : error ? (
+          <h1 className={classes.title}>{error}</h1>
+        ) : (
+          <>
+            <h1 className={classes.title}>
+              {unit
+                .replace('Unit', 'Unit ')
+                .replace('W1', 'W 1')
+                .replace('W2', 'W 2')
+                .replace('BoysR', "Boy's Receiving")
+                .replace('GirlsR', "Girl's Receiving")}
+            </h1>
+            <h3 className={classes.date}>{date}</h3>
+            {/* Example using Grid's API */}
+            {/* <button onClick={buttonListener}>Push Me</button> */}
+            {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
+            <div
+              className='ag-theme-alpine ag-grid'
+              style={{ height: isPrintLayout ? 'auto' : '660px' }}
+            >
+              <AgGridReact
+                ref={gridRef} // Ref for accessing Grid's API
+                rowData={rowData} // Row Data for Rows
+                columnDefs={columnDefs} // Column Defs for Columns
+                defaultColDef={defaultColDef} // Default Column Properties
+                columnTypes={columnTypes} // Column Types
+                animateRows={true} // Optional - set to 'true' to have rows animate when sorted
+                rowSelection='multiple' // Options - allows click selection of rows
+                onCellClicked={cellClickedListener} // Optional - registering for Grid Event
+                onCellValueChanged={onCellValueChanged}
+                onRowSelected={onRowSelected}
+                domLayout={isPrintLayout ? 'print' : null}
+                overlayNoRowsTemplate={noRowsOverlay} // Set the overlay template to your custom message
+              />
+            </div>
             <button
               className={classes.bigButton}
-              onClick={print}
-              title='Print or save spreadsheet to PDF.'
+              onClick={openDialog}
+              title='Add a new row to the spreadsheet.'
             >
-              Print
+              Add New Row
             </button>
-          )}
+            <NewInmateDialog
+              isOpen={isDialogOpen}
+              onOk={handleDialogOk}
+              onCancel={handleDialogCancel}
+              onChange={handleInputChange}
+              inmateData={newInmateData}
+              onRowSelected={onRowSelected}
+            />
+            <button
+              className={classes.bigButton}
+              type='button'
+              onClick={deleteRow}
+              title='Delete the selected row.'
+            >
+              Delete Row
+            </button>
+            {isAgeCalculatorOpen && (
+              <AgeCalculator
+                onClose={() => setIsAgeCalculatorOpen(false)}
+                selectedRow={selectedRow}
+                updateAge={updateAge}
+              />
+            )}
+            <button
+              className={classes.bigButton}
+              onClick={togglePrintLayout}
+              title='Switch between normal and print layouts.'
+            >
+              {isPrintLayout
+                ? 'Switch to Normal Layout'
+                : 'Switch to Print Layout'}
+            </button>
+            {isPrintLayout && (
+              <button
+                className={classes.bigButton}
+                onClick={print}
+                title='Print or save spreadsheet to PDF.'
+              >
+                Print
+              </button>
+            )}
 
-          <button
-            className={classes.bigButton}
-            onClick={exportToExcel}
-            title='Export to .xlsx file and import to Excel, Google Sheets, etc.'
-          >
-            Export Spreadsheet
-          </button>
-        </>
-      )}
-    </div>
+            <button
+              className={classes.bigButton}
+              onClick={exportToExcel}
+              title='Export to .xlsx file and import to Excel, Google Sheets, etc.'
+            >
+              Export Spreadsheet
+            </button>
+          </>
+        )}
+      </div>
+    </RootLayout>
   )
 }
 

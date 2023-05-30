@@ -17,6 +17,7 @@ import { useState, useEffect } from 'react'
 import { deleteDoc, doc, getDoc } from 'firebase/firestore'
 import classes from './layout.module.css'
 import { PasswordDialog } from './components/Dialog/PasswordDialog'
+// import Spinner from './components/Loading/Spinner'
 
 // const inter = Inter({ subsets: ['latin'] })
 
@@ -25,7 +26,7 @@ import { PasswordDialog } from './components/Dialog/PasswordDialog'
 //   description: 'View and edit probation units pop sheets',
 // }
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children, useHtmlBody = true }) {
   const router = useRouter()
   const [user, setUser] = useState(null)
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false)
@@ -36,6 +37,11 @@ export default function RootLayout({ children }) {
   const [errorMessage, setErrorMessage] = useState('')
   const [openOverlay, setOpenOverlay] = useState(false)
 
+  const RootElement = useHtmlBody ? 'html' : 'div'
+  const WrapperElement = useHtmlBody ? 'body' : 'div'
+
+  const [authCheckComplete, setAuthCheckComplete] = useState(false)
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -45,6 +51,7 @@ export default function RootLayout({ children }) {
         // User is signed out
         setUser(null)
       }
+      setAuthCheckComplete(true)
     })
 
     // Cleanup subscription on unmount
@@ -184,28 +191,31 @@ export default function RootLayout({ children }) {
   // }
 
   return (
-    <html lang='en'>
-      <body>
+    <RootElement lang='en'>
+      <WrapperElement>
         <nav className={classes.navbar}>
           <Link className={classes.home} href='/'>
             {/* Home */}
             <h1 className={classes.title}>Probation Units</h1>
           </Link>
 
-          {user ? (
-            <div className={classes.dropdown}>
-              <button className={classes.dropbtn}>Account</button>
-              <div className={classes.dropdownContent}>
-                <div onClick={handleSignOut}>Sign Out</div>
-                <div onClick={openPasswordDialog}>Change Password</div>
-                <div onClick={() => openDialog('deleteAccount')}>
-                  Delete Account
+          {authCheckComplete ? (
+            user ? (
+              <div className={classes.dropdown}>
+                <button className={classes.dropbtn}>Account</button>
+                <div className={classes.dropdownContent}>
+                  <div onClick={handleSignOut}>Sign Out</div>
+                  <div onClick={openPasswordDialog}>Change Password</div>
+                  <div onClick={() => openDialog('deleteAccount')}>
+                    Delete Account
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <Link href='/Login'>Login</Link>
-          )}
+            ) : (
+              <Link href='/Login'>Login</Link>
+            )
+          ) : null}
+
           {isPasswordDialogOpen && dialogType === 'changePassword' && (
             <PasswordDialog
               title='Change Password'
@@ -234,7 +244,7 @@ export default function RootLayout({ children }) {
           )}
         </nav>
         {children}
-      </body>
-    </html>
+      </WrapperElement>
+    </RootElement>
   )
 }

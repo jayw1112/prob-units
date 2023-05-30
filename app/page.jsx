@@ -32,7 +32,7 @@ function Home() {
       <div className={classes.description}>
         {user ? (
           loading ? (
-            <Spinner /> // Display the Spinner when loading is true
+            <Spinner />
           ) : (
             <>
               {user && <h3>Welcome {user && user.displayName}</h3>}
