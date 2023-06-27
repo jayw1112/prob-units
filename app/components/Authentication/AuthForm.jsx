@@ -68,6 +68,12 @@ function AuthForm() {
       return
     }
 
+    // -----********------ Check if the email ends with @probation.lacounty.gov -----********------
+    // if (!email.endsWith('@probation.lacounty.gov')) {
+    //   setError('Please use an email that ends with @probation.lacounty.gov')
+    //   return
+    // }
+
     try {
       let user
       if (isSignUp) {

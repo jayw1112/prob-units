@@ -155,10 +155,20 @@ function Home() {
                   </Link>
                 </li>
                 <li>
+                  <Link onClick={handleClick} href='/units/UnitX'>
+                    X
+                  </Link>
+                </li>
+                <li>
+                  <Link onClick={handleClick} href='/units/UnitY'>
+                    Y
+                  </Link>
+                </li>
+                {/* <li>
                   <Link onClick={handleClick} href='/units/Extra'>
                     Extra
                   </Link>
-                </li>
+                </li> */}
               </ul>
             </>
           )

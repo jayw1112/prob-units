@@ -52,7 +52,7 @@
   margin: 0 auto;
   padding: 2rem;
   max-height: 18rem;
-  column-count: 4;
+  column-count: 5;
 }
 
 .main ul li {
@@ -84,7 +84,7 @@
   } */
 
   .main ul {
-    column-count: 2;
+    column-count: 3;
     padding: 0;
   }
 
@@ -122,7 +122,7 @@
   } */
 
   .main ul {
-    column-count: 4;
+    column-count: 5;
     padding: 0;
   }
 
